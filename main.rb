@@ -2,7 +2,9 @@
 
 require './minruby'
 
-text = minruby_parse('(1 + 2) / 3 * 4 * (56 / 7 + 8 + 9) ** 3')
+text = minruby_parse('(1 + 2) + 3 + 4')
+
+pp(text)
 
 def evaluate(tree)
   # litで始まっている場合は四則演算記号ではないの
@@ -25,21 +27,21 @@ def evaluate(tree)
       left / right
     when '%'
       left % right
-    when "**"
-      left ** right
-    when "<"
+    when '**'
+      left**right
+    when '<'
       left < right
-    when ">"
+    when '>'
       left < right
-    when "<="
+    when '<='
       left <= right
-    when ">="
+    when '>='
       left >= right
-    when "=="
+    when '=='
       left == right
-    when "!="
+    when '!='
       left != right
-    when "<=>"
+    when '<=>'
       left <=> right
     else # ===
       left === right
@@ -51,3 +53,18 @@ end
 
 result = evaluate(text)
 puts(result)
+
+def max(tree)
+  # 最大値を再帰的に取得する
+  return tree[1] if tree[0] == 'lit'
+
+  left = max(tree[1])
+  right = max(tree[2])
+
+  left > right ? left : right
+rescue StandardError => e
+  puts e
+end
+
+max_value = max(text)
+print(max_value)
