@@ -2,7 +2,7 @@
 
 require './minruby'
 
-text = minruby_parse('(1 + 2) / 3 * 4 * (56 / 7 + 8 + 9)')
+text = minruby_parse('(1 + 2) / 3 * 4 * (56 / 7 + 8 + 9) ** 3')
 
 def evaluate(tree)
   # litで始まっている場合は四則演算記号ではないの
@@ -21,8 +21,12 @@ def evaluate(tree)
       left - right
     when '*'
       left * right
-    else # /
+    when '/'
       left / right
+    when '%'
+      left % right
+    else # **
+      left**right
     end
   rescue StandardError => e
     puts 'Oh my goooooood :X'
