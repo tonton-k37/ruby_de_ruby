@@ -1,2 +1,5 @@
-answer = (1 + 2) / 3 * 4 * (56 / 7 + 8 + 9)
-p(answer)
+if 0 == 0
+  p(42)
+else
+  p(43)
+end

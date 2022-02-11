@@ -20,6 +20,11 @@ def evaluate(tree, env)
   # 変数参照処理 -> ["var_ref", "x"] (var_ref時にはenvのキーを指定して返す)
   return env[tree[1]] if tree[0] == "var_ref"
 
+  # 条件分岐処理
+  if tree[0] == "if"
+    return evaluate(tree[1], env) ? evaluate(tree[2], env) : evaluate(tree[3], env)
+  end
+
   left = evaluate(tree[1], env)
   right = evaluate(tree[2], env)
   begin
