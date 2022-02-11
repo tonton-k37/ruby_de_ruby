@@ -25,8 +25,24 @@ def evaluate(tree)
       left / right
     when '%'
       left % right
-    else # **
-      left**right
+    when "**"
+      left ** right
+    when "<"
+      left < right
+    when ">"
+      left < right
+    when "<="
+      left <= right
+    when ">="
+      left >= right
+    when "=="
+      left == right
+    when "!="
+      left != right
+    when "<=>"
+      left <=> right
+    else # ===
+      left === right
     end
   rescue StandardError => e
     puts 'Oh my goooooood :X'
