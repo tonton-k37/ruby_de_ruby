@@ -24,6 +24,20 @@ def evaluate(tree, env)
   if tree[0] == "if"
     return evaluate(tree[1], env) ? evaluate(tree[2], env) : evaluate(tree[3], env)
   end
+  
+  # ループ文
+  # memo: 事前にhashに0が代入されているので、while句の後の評価が実行できている
+  <<-DOC
+  ["stmts",
+    ["var_assign", "i", ["lit", 0]],
+    ["while",
+    ["<", ["var_ref", "i"], ["lit", 10]],
+    ["stmts",
+    ["func_call", "p", ["var_ref", "i"]],
+    ["var_assign", "i", ["+", ["var_ref", "i"], ["lit", 1]]]]]]    
+  DOC
+  evaluate(tree[2], env) while evaluate(tree[1], env) if tree[0] == "while"
+
 
   left = evaluate(tree[1], env)
   right = evaluate(tree[2], env)
