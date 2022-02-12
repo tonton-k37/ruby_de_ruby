@@ -89,12 +89,9 @@ def evaluate(tree, genv, lenv)
     hsh = tree[1..].each_slice(2).map do |item|
       [evaluate(item[0], genv, lenv), evaluate(item[1], genv, lenv)]
     end.to_h
-    
+
     return hsh
   end
-
-
-
 
   left = evaluate(tree[1], genv, lenv)
   right = evaluate(tree[2], genv, lenv)
@@ -136,8 +133,11 @@ end
 
 genv = {
   "p" => ["builtin", "p"],
-  "add" => ["builtin", "add"]}
-lenv = {}
+  "require" => ["builtin", "require"],
+  "minruby_parse" => ["builtin", "minruby_parse"],
+  "minruby_load" => ["builtin", "minruby_load"],
+  "minruby_call" => ["builtin", "minruby_call"],
+}
 
-pp("ABST", text)
+lenv = {}
 evaluate(text, genv, lenv)
