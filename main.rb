@@ -26,10 +26,8 @@ def evaluate(tree, genv, lenv)
       return send(mhd[1], *args)
     else
       # ユーザー定義関数時の処理
-      mhd[1].each_with_index do |param, index|
-        lenv[param] = args[index]
-      end
-      return evaluate(mhd[2], genv, lenv)
+      scoped_lenv = mhd[1].map.with_index{|param, index| [param, args[index]]}.to_h
+      return evaluate(mhd[2], genv, scoped_lenv)
     end
   end
 
