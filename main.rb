@@ -11,16 +11,25 @@ def evaluate(tree, genv, lenv)
   # それ以外は再起関数で繰り返し
   return tree[1] if tree[0] == 'lit'
 
+  # ユーザー定義関数処理
+  # tree => 関数名, tree2 => 仮引数名の配列, tree3 => 関数本体
+  return genv[tree[1]] = ["user_defined", tree[2], tree[3]] if tree[0] == "func_def"
+
   # 関数呼び出しの場合
   # i + 2の理由としては構文木の構成で、指定した引数（以下の場合p)の次に来る値を評価したい為
   # ["func_call", "p", ["lit", 1], ["lit", 2]]
   if tree[0] == "func_call"
+    # 実引数をargsに代入
     args = tree[2..].map{|item| evaluate(item, genv, lenv)}
-    mhd = genv[tree[1].to_sym]
+    mhd = genv[tree[1]]
     if mhd[0] == "builtin"
       return send(mhd[1], *args)
     else
-      "aaaa"
+      # ユーザー定義関数時の処理
+      mhd[1].each_with_index do |param, index|
+        lenv[param] = args[index]
+      end
+      return evaluate(mhd[2], genv, lenv)
     end
   end
 
@@ -91,7 +100,9 @@ def evaluate(tree, genv, lenv)
   end
 end
 
-genv = {p: ["builtin", "p"]}
+genv = {
+  "p" => ["builtin", "p"],
+  "add" => ["builtin", "add"]}
 lenv = {}
 
 pp("ABST", text)

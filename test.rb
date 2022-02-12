@@ -1,5 +1,4 @@
-i = 0
-while i < 10
-p(i)
-i = i + 1
+def add(x, y)
+  x + y
 end
+p(add(1, 1))
