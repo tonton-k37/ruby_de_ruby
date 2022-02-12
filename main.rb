@@ -38,7 +38,7 @@ def evaluate(tree, env)
     ["func_call", "p", ["var_ref", "i"]],
     ["var_assign", "i", ["+", ["var_ref", "i"], ["lit", 1]]]]]]    
   DOC
-  evaluate(tree[2], env) while evaluate(tree[1], env) if tree[0] == "while" or "while2"
+  evaluate(tree[2], env) while evaluate(tree[1], env) if tree[0] == "while" or tree[0] == "while2"
 
   left = evaluate(tree[1], env)
   right = evaluate(tree[2], env)
