@@ -5,26 +5,39 @@ require './minruby'
 str = minruby_load
 text = minruby_parse(str)
 
-def evaluate(tree, env)
+def evaluate(tree, genv, lenv)
   # litで始まっている場合は四則演算記号ではないの
   # かつ、節ではなく葉なので合計する必要ないためそのまま返す
   # それ以外は再起関数で繰り返し
   return tree[1] if tree[0] == 'lit'
 
   # 関数呼び出しの場合
-  return p(evaluate(tree[2], env)) if tree[0] == 'func_call'
+  # i + 2の理由としては構文木の構成で、指定した引数（以下の場合p)の次に来る値を評価したい為
+  # ["func_call", "p", ["lit", 1], ["lit", 2]]
+  if tree[0] == "func_call"
+    args = tree[2..].map{|item| evaluate(item, genv, lenv)}
+    mhd = genv[tree[1].to_sym]
+    if mhd[0] == "builtin"
+      return send(mhd[1], *args)
+    else
+      "aaaa"
+    end
+  end
+
+
+  # return p(evaluate(tree[2], genv, lenv)) if tree[0] == 'func_call'
   # 複文の場合の処理
-  return tree[1..].each{|branch| evaluate(branch, env)} if tree[0] == 'stmts'
+  return tree[1..].each{|branch| evaluate(branch, genv, lenv)} if tree[0] == 'stmts'
   # 変数代入処理 -> ["var_assign", "x", ["lit", 1]]
-  return env[tree[1]] = evaluate(tree[2], env) if tree[0] == 'var_assign'
+  return lenv[tree[1]] = evaluate(tree[2], genv, lenv) if tree[0] == 'var_assign'
   # 変数参照処理 -> ["var_ref", "x"] (var_ref時にはenvのキーを指定して返す)
-  return env[tree[1]] if tree[0] == "var_ref"
+  return lenv[tree[1]] if tree[0] == "var_ref"
 
   # 条件分岐処理
   # if のみ
   # note: caseb文はｍinrubyパーサーでifに置換されているので実装する必要がない。
   if tree[0] == "if"
-    return evaluate(tree[1], env) ? evaluate(tree[2], env) : evaluate(tree[3], env)
+    return evaluate(tree[1], genv, lenv) ? evaluate(tree[2], genv, lenv) : evaluate(tree[3], genv, lenv)
   end
   
   # ループ文
@@ -38,10 +51,10 @@ def evaluate(tree, env)
     ["func_call", "p", ["var_ref", "i"]],
     ["var_assign", "i", ["+", ["var_ref", "i"], ["lit", 1]]]]]]    
   DOC
-  evaluate(tree[2], env) while evaluate(tree[1], env) if tree[0] == "while" or tree[0] == "while2"
+  evaluate(tree[2], genv, lenv) while evaluate(tree[1], genv, lenv) if tree[0] == "while" or tree[0] == "while2"
 
-  left = evaluate(tree[1], env)
-  right = evaluate(tree[2], env)
+  left = evaluate(tree[1], genv, lenv)
+  right = evaluate(tree[2], genv, lenv)
   begin
     case tree[0]
     when '+'
@@ -78,4 +91,8 @@ def evaluate(tree, env)
   end
 end
 
-evaluate(text, {})
+genv = {p: ["builtin", "p"]}
+lenv = {}
+
+pp("ABST", text)
+evaluate(text, genv, lenv)
