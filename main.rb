@@ -84,6 +84,14 @@ def evaluate(tree, genv, lenv)
     return ary[index] = new_value
   end
 
+  # hash
+  if tree[0] == "hash_new"
+    hsh = tree[1..].each_slice(2).map do |item|
+      [evaluate(item[0], genv, lenv), evaluate(item[1], genv, lenv)]
+    end.to_h
+    
+    return hsh
+  end
 
 
 
