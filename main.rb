@@ -60,6 +60,34 @@ def evaluate(tree, genv, lenv)
   DOC
   evaluate(tree[2], genv, lenv) while evaluate(tree[1], genv, lenv) if tree[0] == "while" or tree[0] == "while2"
 
+  # 配列構築子
+  <<-DOC
+  ["stmts",
+    ["var_assign", "ary", ["ary_new", ["lit", 1]]],
+    ["ary_ref", ["var_ref", "ary"], ["lit", 0]]]    
+  DOC
+  return  tree[1..].map{|value| evaluate(value, genv, lenv)} if tree[0] == "ary_new"
+  # 配列参照
+  if tree[0] == "ary_ref"
+    # 参照したい配列をaryで取得
+    # indexで指定したい位置を指定
+    ary = evaluate(tree[1], genv, lenv)
+    index = evaluate(tree[2], genv, lenv)
+    return ary[index]
+  end
+  # 配列代入
+  if tree[0] == "ary_assign"
+    # 新しく渡したい値を評価して代入
+    ary = evaluate(tree[1], genv, lenv)
+    index = evaluate(tree[2], genv, lenv)
+    new_value = evaluate(tree[3], genv, lenv)
+    return ary[index] = new_value
+  end
+
+
+
+
+
   left = evaluate(tree[1], genv, lenv)
   right = evaluate(tree[2], genv, lenv)
   begin
