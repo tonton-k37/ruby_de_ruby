@@ -22,7 +22,7 @@ def evaluate(tree, env)
 
   # 条件分岐処理
   # if のみ
-  # case文 -> caseb文はｍinrubyパーサーでifに置換されているので実装する必要がない。
+  # note: caseb文はｍinrubyパーサーでifに置換されているので実装する必要がない。
   if tree[0] == "if"
     return evaluate(tree[1], env) ? evaluate(tree[2], env) : evaluate(tree[3], env)
   end
@@ -38,10 +38,7 @@ def evaluate(tree, env)
     ["func_call", "p", ["var_ref", "i"]],
     ["var_assign", "i", ["+", ["var_ref", "i"], ["lit", 1]]]]]]    
   DOC
-  evaluate(tree[2], env) while evaluate(tree[1], env) if tree[0] == "while"
-
-
-
+  evaluate(tree[2], env) while evaluate(tree[1], env) if tree[0] == "while" or "while2"
 
   left = evaluate(tree[1], env)
   right = evaluate(tree[2], env)
